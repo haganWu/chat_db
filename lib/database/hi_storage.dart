@@ -1,9 +1,9 @@
+import 'package:chat_db/dao/note_dao.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 
 /// 数据管理类，实现不同的业务接口
-class HiStorage {
-
+class HiStorage implements INote {
   /// 多实例
   static final Map<String, HiStorage> _storageMap = {};
 
@@ -14,12 +14,12 @@ class HiStorage {
   late Database _db;
 
   ///私有构造
-  HiStorage._({required String dbName}): _dbName = dbName {
+  HiStorage._({required String dbName}) : _dbName = dbName {
     _storageMap[_dbName] = this;
   }
 
   static Future<HiStorage> instance({required String dbName}) async {
-    if(!dbName.endsWith(".db")){
+    if (!dbName.endsWith(".db")) {
       dbName = "$dbName.db";
     }
     var storage = _storageMap[dbName];
@@ -27,15 +27,24 @@ class HiStorage {
     return storage;
   }
 
-  Future<HiStorage> _init() async{
+  Future<HiStorage> _init() async {
     _db = await openDatabase(_dbName);
     debugPrint('db ver: ${await _db.getVersion()}');
     return this;
   }
 
-  void destroy(){
+  void destroy() {
     _db.close();
     _storageMap.remove(_dbName);
   }
 
+  @override
+  Future<List<String>> getAllNote() {
+    return NoteDao(_db).getAllNote();
+  }
+
+  @override
+  void saveNode(String content) {
+    NoteDao(_db).saveNode(content);
+  }
 }
