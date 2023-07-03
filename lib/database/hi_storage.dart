@@ -1,4 +1,5 @@
 import 'package:chat_db/dao/note_dao.dart';
+import 'package:chat_db/model/NoteModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -39,12 +40,27 @@ class HiStorage implements INote {
   }
 
   @override
-  Future<List<String>> getAllNote() {
+  Future<List<NoteModel>> getAllNote() {
     return NoteDao(_db).getAllNote();
   }
 
   @override
-  void saveNode(String content) {
-    NoteDao(_db).saveNode(content);
+  void saveNote(NoteModel model) {
+    NoteDao(_db).saveNote(model);
+  }
+
+  @override
+  void deleteNote(int id) {
+    NoteDao(_db).deleteNote(id);
+  }
+
+  @override
+  Future<int> getNoteCount() {
+    return NoteDao(_db).getNoteCount();
+  }
+
+  @override
+  void update(NoteModel model) {
+    NoteDao(_db).update(model);
   }
 }
